@@ -1,0 +1,33 @@
+schemaVersion: "1"
+kind: agent
+name: claude-safe
+displayName: Claude Code (approval mode)
+description: A fork of the built-in claude agent that runs without --dangerously-skip-permissions, so every tool call requires explicit approval
+
+agent:
+  image: "docker/sandbox-templates:claude-code-docker"
+  aiFilename: CLAUDE.md
+  persistence: persistent
+  entrypoint:
+    run: [claude]
+
+network:
+  serviceDomains:
+    api.anthropic.com: anthropic
+    console.anthropic.com: anthropic
+  serviceAuth:
+    anthropic:
+      headerName: x-api-key
+      valueFormat: "%s"
+  allowedDomains:
+    - "claude.com:443"
+
+credentials:
+  sources:
+    anthropic:
+      env:
+        - ANTHROPIC_API_KEY
+
+environment:
+  variables:
+    IS_SANDBOX: "1"
